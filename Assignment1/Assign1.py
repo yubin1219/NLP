@@ -395,7 +395,7 @@ def epoch_time(start_time, end_time):
     return elapsed_mins, elapsed_secs
 
 # Model training
-N_EPOCHS = 20
+N_EPOCHS = 10
 CLIP = 1
 
 best_valid_loss = float('inf')
