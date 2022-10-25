@@ -291,9 +291,9 @@ class Seq2Seq(nn.Module):
         '''
         seq_len, batch_size = trg.size()
         decoded_batch = torch.zeros((batch_size, seq_len))
-        # decoder_input = torch.LongTensor([[EN.vocab.stoi['<sos>']] for _ in range(batch_size)]).cuda()
+        
         decoder_input = Variable(trg.data[0, :]).cuda()  # sos
-        print(decoder_input.shape)
+        
         for t in range(seq_len):
             decoder_output, decoder_hidden, _ = self.decoder(decoder_input, decoder_hidden, encoder_outputs)
 
@@ -324,10 +324,10 @@ class BeamSearchNode(object):
         reward = 0
         # Add here a function for shaping a reward
 
-        return self.logp / float(self.leng - 1 + 1e-6) + alpha * reward  # 注意这里是有惩罚参数的，参考恩达的 beam-search
+        return self.logp / float(self.leng - 1 + 1e-6) + alpha * reward 
 
     def __lt__(self, other):
-        return self.leng < other.leng  # 这里展示分数相同的时候怎么处理冲突，具体使用什么指标，根据具体情况讨论
+        return self.leng < other.leng 
 
     def __gt__(self, other):
         return self.leng > other.leng
