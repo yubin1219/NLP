@@ -273,7 +273,65 @@ class Seq2Seq(nn.Module):
             input = trg[t] if teacher_force else top1
 
         return outputs
+    
+    def decode(self, src, trg, method='beam-search'):
+        encoder_output, hidden = self.encoder(src)
+        hidden = hidden[:self.decoder.n_layers]
+        if method == 'beam-search':
+            return self.beam_decode(trg, hidden, encoder_output)
+        else:
+            return self.greedy_decode(trg, hidden, encoder_output)
 
+    def greedy_decode(self, trg, decoder_hidden, encoder_outputs, ):
+        '''
+        :param target_tensor: target indexes tensor of shape [B, T] where B is the batch size and T is the maximum length of the output sentence
+        :param decoder_hidden: input tensor of shape [1, B, H] for start of the decoding
+        :param encoder_outputs: if you are using attention mechanism you can pass encoder outputs, [T, B, H] where T is the maximum length of input sentence
+        :return: decoded_batch
+        '''
+        seq_len, batch_size = trg.size()
+        decoded_batch = torch.zeros((batch_size, seq_len))
+        # decoder_input = torch.LongTensor([[EN.vocab.stoi['<sos>']] for _ in range(batch_size)]).cuda()
+        decoder_input = Variable(trg.data[0, :]).cuda()  # sos
+        print(decoder_input.shape)
+        for t in range(seq_len):
+            decoder_output, decoder_hidden, _ = self.decoder(decoder_input, decoder_hidden, encoder_outputs)
+
+            topv, topi = decoder_output.data.topk(1)  # [32, 10004] get candidates
+            topi = topi.view(-1)
+            decoded_batch[:, t] = topi
+
+            decoder_input = topi.detach().view(-1)
+
+        return decoded_batch
+
+class BeamSearchNode(object):
+    def __init__(self, hiddenstate, previousNode, wordId, logProb, length):
+        '''
+        :param hiddenstate:
+        :param previousNode:
+        :param wordId:
+        :param logProb:
+        :param length:
+        '''
+        self.h = hiddenstate
+        self.prevNode = previousNode
+        self.wordid = wordId
+        self.logp = logProb
+        self.leng = length
+
+    def eval(self, alpha=1.0):
+        reward = 0
+        # Add here a function for shaping a reward
+
+        return self.logp / float(self.leng - 1 + 1e-6) + alpha * reward  # 注意这里是有惩罚参数的，参考恩达的 beam-search
+
+    def __lt__(self, other):
+        return self.leng < other.leng  # 这里展示分数相同的时候怎么处理冲突，具体使用什么指标，根据具体情况讨论
+
+    def __gt__(self, other):
+        return self.leng > other.leng
+    
 # Hyper parameters
 INPUT_DIM = len(SRC.vocab)
 OUTPUT_DIM = len(TRG.vocab)
