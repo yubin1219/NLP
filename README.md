@@ -5,3 +5,4 @@
 ## 3. XLNet: Generalized Autoregressive Pretraining for Language Understanding [[paper](https://arxiv.org/abs/1906.08237)][[code](https://github.com/yubin1219/NLP/tree/main/Assignment3)]
 ## 4. ELECTRA: Pre-training Text Encoders as Discriminators Rather Than Generators [[paper](https://arxiv.org/abs/2003.10555)][[code](https://github.com/yubin1219/NLP/tree/main/Assignment4)]
 ## 5. DialoGPT: Large-Scale Generative Pre-training for Conversational Response Generation [[paper](https://arxiv.org/abs/1911.00536)][[code](https://github.com/yubin1219/NLP/tree/main/Assignment5)]
+## 6. Term Project : Application of DialoGPT for Customized Chatbot [[Our term paper](https://github.com/yubin1219/NLP/blob/main/term_project/term_paper.pdf)] [[Star Wars chatbot](https://github.com/yubin1219/NLP/blob/main/term_project/StarWars_Chatbot.ipynb)] [[Rick chatbot](https://github.com/yubin1219/NLP/blob/main/term_project/Rick_Chatbot.ipynb)]
